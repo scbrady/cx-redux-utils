@@ -23,6 +23,7 @@ import {
   lt,
   merge,
   mergeAll,
+  not,
   nthArg,
   objOf,
   of,
@@ -42,9 +43,11 @@ export { actionTestSuite } from './actionTest';
 const isNilOrEmpty = or(isNil, isEmpty);
 const orEmptyObject = defaultTo({});
 
+const isNotEmpty = compose(not, isEmpty);
 const emptyObject = always({});
 const getPropOrEmptyObjectFunction = propOr(emptyObject);
 const getPropOrEmptyString = propOr('');
+const firstArgument = nthArg(0);
 const secondArgument = nthArg(1);
 
 /**
@@ -74,7 +77,8 @@ const typeIs = typeName => compose(equals(typeName), type, nthArg(0));
  * @return {*}                  merged object Or handler result
  */
 const applyHandlerByType = cond([
-  [typeIs('Object'), merge],
+  [compose(isNotEmpty, secondArgument), merge],
+  [typeIs('Object'), firstArgument],
   [T, secondArgument],
 ]);
 
